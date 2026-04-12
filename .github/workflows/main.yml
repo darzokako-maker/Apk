@@ -1,42 +1,28 @@
 name: APK Oluşturucu
-
-on:
-  push:
-    branches: [ "main" ] # Ana dalın ismi farklıysa (örneğin 'master') onu yazmalısın
-  pull_request:
-    branches: [ "main" ]
+on: [push]
 
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
-      # 1. Depodaki kodları çekiyoruz (v4 güncel sürümdür)
-      - name: Kodları Getir
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      # 2. Java ortamını kuruyoruz (Flutter için gerekli)
-      - name: Java Kurulumu
-        uses: actions/setup-java@v3
-        with:
-          distribution: 'temurin'
-          java-version: '17'
-
-      # 3. Flutter ortamını kuruyoruz
       - name: Flutter Kurulumu
         uses: subosito/flutter-action@v2
         with:
           channel: 'stable'
 
-      # 4. Bağımlılıkları indiriyoruz
-      - name: Paketleri İndir
+      # KRİTİK ADIM: Eksik olan Android/Gradle dosyalarını GitHub içinde oluşturur
+      - name: Projeyi Tamamla
+        run: |
+          flutter create . --overwrite --platforms android
+
+      - name: Paketleri Getir
         run: flutter pub get
 
-      # 5. APK dosyasını oluşturuyoruz
       - name: APK Derle
         run: flutter build apk --debug
 
-      # 6. Oluşan APK'yı indirilebilir hale getiriyoruz (Hata aldığın v4 güncellemesi burada)
       - name: APK'yı Sisteme Yükle
         uses: actions/upload-artifact@v4
         with:
