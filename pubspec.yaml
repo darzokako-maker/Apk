@@ -1,11 +1,6 @@
-name: basit_uygulama
-description: APK Test
-version: 1.0.0+1
-environment:
-  sdk: '>=3.0.0 <4.0.0'
 dependencies:
   flutter:
     sdk: flutter
-flutter:
-  uses-material-design: true
+  system_alert_window: ^1.4.0  # Yüzen pencere için
+  permission_handler: ^11.0.0  # İzin yönetimi için
   
