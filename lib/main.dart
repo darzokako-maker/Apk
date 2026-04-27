@@ -2,69 +2,63 @@ import 'package:flutter/material.dart';
 import 'package:system_alert_window/system_alert_window.dart';
 import 'dart:io';
 
-void main() => runApp(const SecretApp());
+void main() => runApp(const MyApp());
 
-class SecretApp extends StatelessWidget {
-  const SecretApp({super.key});
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData.dark(),
-      home: const MainMenu(),
+      home: const MainControlPage(),
     );
   }
 }
 
-class MainMenu extends StatefulWidget {
-  const MainMenu({super.key});
+class MainControlPage extends StatefulWidget {
+  const MainControlPage({super.key});
 
   @override
-  State<MainMenu> createState() => _MainMenuState();
+  State<MainControlPage> createState() => _MainControlPageState();
 }
 
-class _MainMenuState extends State<MainMenu> {
-  
+class _MainControlPageState extends State<MainControlPage> {
   @override
   void initState() {
     super.initState();
-    _requestPermissions();
+    _checkPermissions();
   }
 
-  // Gerekli izinleri ve Root durumunu sorgula
-  void _requestPermissions() async {
+  Future<void> _checkPermissions() async {
     await SystemAlertWindow.requestPermissions;
-    // Basit bir root kontrolü
-    try {
-      Process.runSync('su', ['-c', 'whoami']);
-      print("Root izni doğrulandı.");
-    } catch (e) {
-      print("Cihaz rootlu değil veya izin verilmedi!");
-    }
   }
 
-  void _showOverlay() {
+  // Yüzen Menüyü Başlat
+  void _openOverlayMenu() {
     SystemWindowHeader header = SystemWindowHeader(
-      title: SystemWindowText(text: "Sistem Aracı", fontSize: 14, textColor: Colors.white),
+      title: SystemWindowText(text: "Hafıza Denetleyici", fontSize: 14, textColor: Colors.white),
       padding: SystemWindowPadding.setSymmetricPadding(12, 12),
-      decoration: SystemWindowDecoration(startColor: Colors.grey[900]),
+      decoration: SystemWindowDecoration(startColor: Colors.black87),
     );
 
     SystemWindowBody body = SystemWindowBody(
       rows: [
         EachRow(columns: [
-          EachColumn(text: SystemWindowText(text: "Hafıza Taraması Hazır", fontSize: 12, color: Colors.white70))
+          EachColumn(text: SystemWindowText(text: "Root Durumu: Aktif", fontSize: 12, color: Colors.greenAccent))
+        ]),
+        EachRow(columns: [
+          EachColumn(text: SystemWindowText(text: "Hedef Bekleniyor...", fontSize: 10, color: Colors.white60))
         ]),
       ],
     );
 
     SystemAlertWindow.showSystemWindow(
-      height: 200,
-      width: 150,
+      height: 250,
+      width: 200,
       header: header,
       body: body,
-      margin: SystemWindowMargin(left: 8, top: 100, right: 8, bottom: 8),
       gravity: SystemWindowGravity.TOP,
     );
   }
@@ -72,17 +66,17 @@ class _MainMenuState extends State<MainMenu> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Gelişmiş Denetleyici")),
+      appBar: AppBar(title: const Text("Sistem Modülü")),
       body: Center(
         child: Column(
-          mainAxisAlignment: MainType.center,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(Icons.security, size: 80, color: Colors.greenAccent),
-            const SizedBox(height: 20),
+            const Icon(Icons.developer_mode, size: 100, color: Colors.blueAccent),
+            const SizedBox(height: 30),
             ElevatedButton(
-              onPressed: _showOverlay,
-              style: ElevatedButton.styleFrom(backgroundColor: Colors.redAccent),
-              child: const Text("Yüzen Menüyü Aç"),
+              style: ElevatedButton.styleFrom(backgroundColor: Colors.blueGrey[800], padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 15)),
+              onPressed: _openOverlayMenu,
+              child: const Text("MENÜYÜ AKTİF ET"),
             ),
           ],
         ),
